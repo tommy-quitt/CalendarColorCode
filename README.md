@@ -33,3 +33,40 @@ const domainColorMap = {
     "default": "1", // Blue (default color for no guests)
 };
 const noMatchColor = "8"; // Gray for events with guests but no domain match
+
+domainColorMap: Maps email domains to Google Calendar color codes.
+noMatchColor: Color code for events with guests but no matching domain.
+Color Codes
+
+### Google Calendar color codes:
+
+1 = Blue (default)
+2 = Green
+3 = Purple
+4 = Red
+5 = Yellow
+6 = Orange
+7 = Turquoise
+8 = Gray
+9 = Bold Blue
+10 = Bold Green
+11 = Bold Red
+
+## Setup Instructions
+Add the Script to Your Google Account:
+
+Open Google Drive, create a new Google Apps Script file, and paste the code.
+Set Up Authorization:
+
+Run the script manually once to grant authorization.
+Configure Time-Based Trigger:
+
+Go to Triggers in the Apps Script editor.
+Set up a time-driven trigger to run colorCodeMeetingsByDomain at your preferred interval (e.g., daily).
+
+
+## Contributing
+Feel free to fork this repository and submit pull requests. Contributions to enhance functionality or improve the documentation are welcome!
+
+## Support
+For issues or questions, please open an issue in the repository.
