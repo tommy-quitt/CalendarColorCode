@@ -1,6 +1,10 @@
 function colorCodeMeetingsByDomain() {
   Logger.log("Starting color coding process...");
 
+// Configurable constants
+  const TIME_SPAN_DAYS = 7; // Time span for scanning events (in days)
+  const NO_MATCH_COLOR = "2"; // Color code for events with guests but no domain match
+
   // Color map based on email domain
   const domainColorMap = {
     "microsoft.com": "11", // Pale red
@@ -10,19 +14,17 @@ function colorCodeMeetingsByDomain() {
     "default": "10", // Blue (default color for no guests)
   };
   
-  const noMatchColor = "2"; //  color for meetings with guests but no domain match
-
   Logger.log("Domain-Color map initialized with codes: " + JSON.stringify(domainColorMap));
 
-  // Define the time range to scan (e.g., next 30 days)
+  // Define the time range to scan using the configurable TIME_SPAN_DAYS
   const calendar = CalendarApp.getDefaultCalendar();
   const now = new Date();
   const endDate = new Date();
-  endDate.setDate(now.getDate() + 30);
+  endDate.setDate(now.getDate() + TIME_SPAN_DAYS);
 
   // Get all events in the time range
   const events = calendar.getEvents(now, endDate);
-  Logger.log("Number of events found until: " + endDate + ": " + events.length);
+  Logger.log("Number of events found in the next " + TIME_SPAN_DAYS + " days: " + events.length);
 
   events.forEach((event, index) => {
     const eventTitle = event.getTitle();
@@ -32,7 +34,13 @@ function colorCodeMeetingsByDomain() {
     Logger.log("Processing event #" + (index + 1) + ": " + eventTitle);
     Logger.log("Number of guests for event '" + eventTitle + "': " + guests.length);
 
-    // Process only if there are guests
+    // Skip all-day events with no guests
+    if (guests.length === 0 && event.isAllDayEvent()) {
+      Logger.log("Skipping all-day event with no guests: '" + eventTitle + "'");
+      return; // Move to the next event
+    }
+
+    // Only process guests if there are any
     if (guests.length > 0) {
       let domainMatchFound = false;
 
@@ -50,10 +58,10 @@ function colorCodeMeetingsByDomain() {
         }
       }
 
-      // Set to noMatchColor if there are guests but no matching domain
+      // Set to NO_MATCH_COLOR if there are guests but no matching domain
       if (!domainMatchFound) {
-        eventColor = noMatchColor;
-        Logger.log("No matching domain found; setting color to noMatchColor for event with guests.");
+        eventColor = NO_MATCH_COLOR;
+        Logger.log("No matching domain found; setting color to NO_MATCH_COLOR (Gray) for event with guests.");
       }
 
       // Apply the selected color to the event
@@ -61,8 +69,8 @@ function colorCodeMeetingsByDomain() {
       Logger.log("Color set to: " + eventColor + " for event titled '" + eventTitle + "'");
       
     } else {
-      Logger.log("No guests found for event titled '" + eventTitle + "'; applying default color.");
-      //event.setColor(eventColor); // Apply default color for events with no guests
+      Logger.log("No guests found for event titled '" + eventTitle + "'; applying default color (Blue).");
+      event.setColor(eventColor); // Apply default color for events with no guests, if not all-day event
     }
   });
 
