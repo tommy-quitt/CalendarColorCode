@@ -33,6 +33,7 @@ const domainColorMap = {
     "default": "1", // Blue (default color for no guests)
 };
 const noMatchColor = "8"; // Gray for events with guests but no domain match
+```
 
 domainColorMap: Maps email domains to Google Calendar color codes.
 noMatchColor: Color code for events with guests but no matching domain.
